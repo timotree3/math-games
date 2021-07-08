@@ -3,7 +3,7 @@ import './App.css'
 
 function App () {
   const [tilt, setTilt] = useState(0)
-  const [radius, setRadius] = useState(105)
+  const radius = 107
   const leftRadians = ((180 - tilt) / 360) * 2 * Math.PI
   const defaultLeftRadians = (180 / 360) * 2 * Math.PI
   const computedLeftX = Math.cos(leftRadians)
@@ -58,14 +58,8 @@ function App () {
         value={tilt}
         onChange={event => setTilt(event.target.value)}
       />
-      <input
-        type='range'
-        min='0'
-        max='400'
-        value={radius}
-        onChange={event => setRadius(event.target.value)}
-      />
-      Tilt: {tilt} Radius: {radius}
+      <br />
+      Tilt: {tilt}
     </div>
   )
 }
