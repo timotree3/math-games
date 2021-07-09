@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import Balls from './Balls'
 import Bowl from './Bowl'
 
 function App () {
@@ -23,18 +24,96 @@ function App () {
     (Math.sin(((0 - tilt) / 360) * 2 * Math.PI) -
       Math.sin((0 / 360) * 2 * Math.PI)) *
     radius
+
+  const [mouseX, setMouseX] = useState()
+  const [mouseY, setMouseY] = useState()
+  const [mouseClientX, setMouseClientX] = useState()
+  const [mouseClientY, setMouseClientY] = useState()
+  const [balls, setBalls] = useState({
+    left: ['red', 'green'],
+    right: ['blue', 'yellow']
+  })
+  const [dragging, setDragging] = useState({ location: null })
   return (
-    <div>
-      <svg viewBox='0 0 640 480' xmlns='http://www.w3.org/2000/svg'>
+    <div id='app'>
+      <svg
+        viewBox='0 0 640 480'
+        xmlns='http://www.w3.org/2000/svg'
+        onMouseMove={event => {
+          setMouseX(event.pageX - document.getElementById('app').offsetLeft)
+          setMouseY(event.pageY - document.getElementById('app').offsetTop)
+          setMouseClientX(event.clientX)
+          setMouseClientY(event.clientY)
+        }}
+        onMouseUp={() => {
+          if (dragging.location === 'left') {
+            const box = document
+              .getElementById('right-bowl')
+              .getBoundingClientRect()
+            if (
+              mouseClientX >= box.left &&
+              mouseClientX <= box.left + box.width &&
+              mouseClientY >= box.top &&
+              mouseClientY <= box.top + box.height
+            ) {
+              setBalls({
+                left: balls.left.filter((_, i) => i !== dragging.index),
+                right: balls.right.concat(balls.left[dragging.index])
+              })
+            }
+          } else if (dragging.location === 'right') {
+            const box = document
+              .getElementById('left-bowl')
+              .getBoundingClientRect()
+            if (
+              mouseClientX >= box.left &&
+              mouseClientX <= box.left + box.width &&
+              mouseClientY >= box.top &&
+              mouseClientY <= box.top + box.height
+            ) {
+              setBalls({
+                right: balls.right.filter((_, i) => i !== dragging.index),
+                left: balls.left.concat(balls.right[dragging.index])
+              })
+            }
+          }
+          setDragging({ location: null })
+        }}
+        onMouseLeave={() => setDragging({ location: null })}
+      >
         <g fill='#e4b04a' stroke='#3c6231'>
           <path d='m231.89 360.75h176.79s-60.527-10.812-77.5-33.214c-5.5108-7.2737 0.73831-18.099 0.42859-27.143l-6.5-189.79h-8.9286l-6.5 189.79c-0.30969 9.0424 5.645 19.896 0.071381 27.143-17.202 22.365-77.857 33.214-77.857 33.214z' />
 
-          <g transform={`translate(${leftX} ${-leftY})`}>
-            <Bowl ballColors={['red', 'green']} />
+          <Balls
+            colors={balls.left}
+            mouseX={mouseX}
+            mouseY={mouseY}
+            bowlX={leftX}
+            bowlY={-leftY}
+            dragging={
+              dragging && dragging.location === 'left' ? dragging.index : null
+            }
+            setDragging={index => setDragging({ location: 'left', index })}
+          />
+          <Balls
+            colors={balls.right}
+            mouseX={mouseX}
+            mouseY={mouseY}
+            bowlX={rightX + 214.71}
+            bowlY={-rightY}
+            dragging={
+              dragging && dragging.location === 'right' ? dragging.index : null
+            }
+            setDragging={index => setDragging({ location: 'right', index })}
+          />
+          <g id='left-bowl' transform={`translate(${leftX} ${-leftY})`}>
+            <Bowl />
           </g>
-
-          <g transform={`translate(${rightX + 214.71} ${-rightY})`}>
-            <Bowl ballColors={['blue', 'yellow']} />
+          <g
+            id='right-bowl'
+            transform={`translate(${rightX + 214.71} ${-rightY})`}
+          >
+            <Bowl />
           </g>
 
           <path

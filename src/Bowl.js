@@ -1,9 +1,6 @@
-export default function Bowl (props) {
+export default function Bowl () {
   return (
     <g>
-      {(props.ballColors ?? []).map((color, i) => (
-        <circle cx={i * 20 + 175} cy={253} r='8' fill={color} key={i} />
-      ))}
       <g strokeWidth='6'>
         <path d='m158.82 257.18l57.143-155' />
         <path d='m267.04 258.43l-57.143-155' />
