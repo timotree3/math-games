@@ -37,11 +37,15 @@ function App () {
   return (
     <div id='app'>
       <svg
+        id='game'
         viewBox='0 0 640 480'
         xmlns='http://www.w3.org/2000/svg'
         onMouseMove={event => {
-          setMouseX(event.pageX - document.getElementById('app').offsetLeft)
-          setMouseY(event.pageY - document.getElementById('app').offsetTop)
+          const appBox = document.getElementById('app')
+          const scaleFactor =
+            640 / document.getElementById('game').getBoundingClientRect().width
+          setMouseX((event.pageX - appBox.offsetLeft) * scaleFactor)
+          setMouseY((event.pageY - appBox.offsetTop) * scaleFactor)
           setMouseClientX(event.clientX)
           setMouseClientY(event.clientY)
         }}
@@ -88,8 +92,8 @@ function App () {
             colors={balls.left}
             mouseX={mouseX}
             mouseY={mouseY}
-            bowlX={leftX}
-            bowlY={-leftY}
+            bowlX={leftX + 175}
+            bowlY={253 - leftY}
             dragging={
               dragging && dragging.location === 'left' ? dragging.index : null
             }
@@ -99,8 +103,8 @@ function App () {
             colors={balls.right}
             mouseX={mouseX}
             mouseY={mouseY}
-            bowlX={rightX + 214.71}
-            bowlY={-rightY}
+            bowlX={rightX + 214.71 + 175}
+            bowlY={253 - rightY}
             dragging={
               dragging && dragging.location === 'right' ? dragging.index : null
             }
